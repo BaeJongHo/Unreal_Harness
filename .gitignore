@@ -6,6 +6,9 @@ Thumbs.db
 .DS_Store
 *.swp
 
+# 파이프라인 산출 문서 (ue-architect / ue-doc-writer)
+Feature/
+
 # 이 저장소는 하네스 템플릿이다. 아래는 실제 UE 프로젝트에 적용했을 때를 대비한 참고용.
 # (이 저장소 자체에는 해당 산출물이 없다.)
 Binaries/
