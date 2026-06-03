@@ -32,13 +32,13 @@
 
 | 단계 | 에이전트 | 도구 권한 | 입력 → 출력 |
 | --- | --- | --- | --- |
-| 1 설계 | [`ue-architect`](../.claude/agents/ue-architect.md) | Read, Grep, Glob, WebSearch, WebFetch | 기능 요청 → 구현 계획 |
-| 2 구현 | [`ue-implementer`](../.claude/agents/ue-implementer.md) | + Edit, Write, Bash | 구현 계획 → 코드 변경 |
-| 3 빌드 | [`ue-builder`](../.claude/agents/ue-builder.md) | Read, Grep, Glob, Edit, Bash | 변경 → 빌드 성공 |
-| 4 리뷰 | [`ue-reviewer`](../.claude/agents/ue-reviewer.md) | Read, Grep, Glob, Bash | 변경 → 리뷰 리포트 |
-| 5 문서화 | [`ue-doc-writer`](../.claude/agents/ue-doc-writer.md) | Read, Grep, Glob, Bash, Write | 전체 산출물 → md 개발 문서 |
+| 1 설계 | [`ue-architect`](../.claude/agents/ue-architect.md) | Read, Grep, Glob, WebSearch, WebFetch, PowerShell, Write | 기능 요청 → 구현 계획 (+ `Feature\architect\`에 저장) |
+| 2 구현 | [`ue-implementer`](../.claude/agents/ue-implementer.md) | + Edit, Write, PowerShell, Bash | 구현 계획 → 코드 변경 |
+| 3 빌드 | [`ue-builder`](../.claude/agents/ue-builder.md) | Read, Grep, Glob, Edit, PowerShell, Bash | 변경 → 빌드 성공 |
+| 4 리뷰 | [`ue-reviewer`](../.claude/agents/ue-reviewer.md) | Read, Grep, Glob, PowerShell, Bash | 변경 → 리뷰 리포트 |
+| 5 문서화 | [`ue-doc-writer`](../.claude/agents/ue-doc-writer.md) | Read, Grep, Glob, PowerShell, Bash, Write | 전체 산출물 → 개발 문서 (+ `Feature\doc\`에 저장) |
 
-> 5단계 문서는 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장된다(경로는 에이전트 정의에서 변경 가능).
+> 산출 문서는 프로젝트 루트 기준으로 저장된다: 1단계 설계 문서 → `Feature\architect\{날짜}_{기능명}.md`, 5단계 개발 문서 → `Feature\doc\{날짜}_{기능명}.md` (경로는 각 에이전트 정의에서 변경 가능).
 
 ## 설계 원칙
 

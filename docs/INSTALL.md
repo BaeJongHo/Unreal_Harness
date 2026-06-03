@@ -43,8 +43,12 @@ docs/
 - 훅 명령은 프로젝트 루트 기준 상대경로(`.claude\hooks\...`)다. 만약 훅이 동작하지 않으면, 사용 중인 OS/셸에 맞게 `settings.json`의 `command`를 절대경로 또는 `$CLAUDE_PROJECT_DIR\.claude\hooks\...` 형태로 조정한다.
 - macOS/Linux를 쓴다면 `.ps1` 훅을 `.sh`로 포팅하고 `settings.json`의 `command`를 `bash` 호출로 바꾼다.
 
-## 5. 문서 산출 경로 (ue-doc-writer)
-파이프라인 5단계 `ue-doc-writer`는 기능 개발 문서를 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장한다. 다른 위치에 저장하려면 [.claude/agents/ue-doc-writer.md](../.claude/agents/ue-doc-writer.md)의 "산출 위치(고정)" 경로와 [.claude/hooks/gate-pipeline.ps1](../.claude/hooks/gate-pipeline.ps1)의 에이전트 목록은 그대로 두고 경로만 바꾸면 된다.
+## 5. 문서 산출 경로 (프로젝트 루트 기준)
+파이프라인은 두 종류의 md 문서를 **프로젝트 루트 아래**에 저장한다:
+- 1단계 `ue-architect` 설계 문서 → `Feature\architect\{날짜}_{기능명}.md`
+- 5단계 `ue-doc-writer` 개발 문서 → `Feature\doc\{날짜}_{기능명}.md`
+
+다른 위치에 저장하려면 각 에이전트 정의([ue-architect.md](../.claude/agents/ue-architect.md)의 "설계 문서 저장", [ue-doc-writer.md](../.claude/agents/ue-doc-writer.md)의 "산출 위치") 경로만 바꾸면 된다. 이 문서들을 git에서 제외하려면 `Feature/`를 `.gitignore`에 추가한다.
 
 ## 6. 권한
 `settings.json`의 `permissions.allow`에는 안전한 git 읽기 명령과 **UE 빌드 도구(`Build.bat` / `RunUAT.bat` / `UnrealEditor.exe`)** 가 들어 있다. 빌드 도구는 엔진 경로가 환경마다 다르므로 **경로 무관 와일드카드**(`PowerShell(& "*Build.bat"*)` 등)로 등록돼 있어, `& "<엔진경로>\...\Build.bat" ...` 형태의 호출에 매칭된다.

@@ -1,6 +1,6 @@
 ---
 name: ue-doc-writer
-description: ue-feature 파이프라인의 마지막(5단계). 완료된 기능/콘텐츠 개발 내용을 사용 기술·설계 근거·BP 설정 체크리스트까지 담은 내부 md 문서로 작성한다. 산출 경로는 "C:\Users\user\Desktop\UE5 Game Feature". 빌드·리뷰가 끝난 뒤 개발 기록을 남길 때 사용한다.
+description: ue-feature 파이프라인의 마지막(5단계). 완료된 기능/콘텐츠 개발 내용을 사용 기술·설계 근거·BP 설정 체크리스트까지 담은 내부 md 문서로 작성한다. 산출 경로는 프로젝트 루트의 "Feature\doc". 빌드·리뷰가 끝난 뒤 개발 기록을 남길 때 사용한다.
 tools: Read, Grep, Glob, PowerShell, Bash, Write
 model: claude-sonnet-4-6
 ---
@@ -13,10 +13,10 @@ model: claude-sonnet-4-6
 3. **메타데이터 수집**: 관련 모듈(변경 파일 경로 기준), 상태(완료/WIP), 분류 태그를 정한다. 커밋된 상태면 `git rev-parse --short HEAD`로 커밋 해시를 얻고, 미커밋이면 "(미커밋)"으로 둔다.
 4. **작성·저장**: 폴더 존재를 보장하고 아래 형식으로 `Write`한 뒤, 저장한 **절대 경로**를 보고한다.
 
-## 산출 위치 (고정)
-- 저장 폴더: `C:\Users\user\Desktop\UE5 Game Feature` (없으면 생성)
+## 산출 위치
+- 저장 폴더: 프로젝트 루트의 `Feature\doc\` (없으면 생성)
   ```powershell
-  New-Item -ItemType Directory -Force -Path "C:\Users\user\Desktop\UE5 Game Feature" | Out-Null
+  New-Item -ItemType Directory -Force -Path "Feature\doc" | Out-Null
   ```
 - 파일명 규칙: `{YYYY-MM-DD}_{기능명-kebab}.md` (예: `2026-06-03_interactable-component.md`)
   - 같은 이름이 이미 있으면 덮어쓰지 말고 `-v2`, `-v3` 접미사를 붙인다.
