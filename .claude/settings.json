@@ -7,7 +7,10 @@
       "PowerShell(git log:*)",
       "PowerShell(git add:*)",
       "PowerShell(git branch:*)",
-      "PowerShell(git restore:*)"
+      "PowerShell(git restore:*)",
+      "PowerShell(& \"*Build.bat\"*)",
+      "PowerShell(& \"*RunUAT.bat\"*)",
+      "PowerShell(& \"*UnrealEditor.exe\"*)"
     ],
     "deny": [
       "Edit(**/Intermediate/**)",

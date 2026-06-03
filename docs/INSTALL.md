@@ -47,4 +47,7 @@ docs/
 파이프라인 5단계 `ue-doc-writer`는 기능 개발 문서를 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장한다. 다른 위치에 저장하려면 [.claude/agents/ue-doc-writer.md](../.claude/agents/ue-doc-writer.md)의 "산출 위치(고정)" 경로와 [.claude/hooks/gate-pipeline.ps1](../.claude/hooks/gate-pipeline.ps1)의 에이전트 목록은 그대로 두고 경로만 바꾸면 된다.
 
 ## 6. 권한
-`settings.json`의 `permissions.allow`에는 안전한 git 읽기 명령만 들어 있다. 빌드/패키징 명령은 처음 실행 시 승인 프롬프트가 뜬다. 자주 쓰는 빌드 명령을 무프롬프트로 돌리려면 본인의 `settings.local.json`에 허용 규칙을 추가한다(개인 설정이라 공유되지 않음).
+`settings.json`의 `permissions.allow`에는 안전한 git 읽기 명령과 **UE 빌드 도구(`Build.bat` / `RunUAT.bat` / `UnrealEditor.exe`)** 가 들어 있다. 빌드 도구는 엔진 경로가 환경마다 다르므로 **경로 무관 와일드카드**(`PowerShell(& "*Build.bat"*)` 등)로 등록돼 있어, `& "<엔진경로>\...\Build.bat" ...` 형태의 호출에 매칭된다.
+
+- 위 패턴이 본인 호출 형태와 달라 여전히 프롬프트가 뜨면, **프롬프트의 "항상 허용"을 선택**하면 된다 — Claude Code가 정확한 규칙을 `settings.local.json`에 자동 추가한다(개인 설정이라 공유 안 됨).
+- 쿠킹/패키징처럼 무겁거나 위험한 명령까지 자동 허용하고 싶지 않으면, 공유 `settings.json`에서 해당 패턴을 빼고 개인 `settings.local.json`에만 두는 것도 방법이다.
