@@ -22,7 +22,7 @@ ue-architect → ue-implementer → ue-builder → ue-reviewer → ue-doc-writer
 
 | 경로 | 내용 |
 | --- | --- |
-| [`CLAUDE.md`](CLAUDE.md) | UE 5.7 프로젝트 규약 — 빌드 명령, C++ 네이밍, **GC/UPROPERTY 규칙**, 모듈 구조, 금지 경로 |
+| [`CLAUDE.md`](CLAUDE.md) | UE 5.7 프로젝트 규약 — 빌드 명령, C++ 네이밍, **GC/UPROPERTY 규칙**, 성능(Tick 최소화·풀링), 모듈 구조, **에셋/콘텐츠 규약**(네이밍·폴더·리다이렉터), 금지 경로 |
 | [`.claude/agents/`](.claude/agents) | 파이프라인 서브에이전트 5종 (architect / implementer / builder / reviewer / doc-writer) |
 | [`.claude/commands/ue-feature.md`](.claude/commands/ue-feature.md) | 파이프라인 진입 슬래시 커맨드 (단계마다 승인 게이트) |
 | [`.claude/skills/ue-new-class/`](.claude/skills/ue-new-class) | 규약에 맞는 새 C++ 클래스(Actor/Component/Subsystem 등) 스캐폴딩 |

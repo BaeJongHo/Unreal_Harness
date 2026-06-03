@@ -25,7 +25,7 @@ model: opus
 - 리플리케이션 프로퍼티 추가 시 `GetLifetimeReplicatedProps`를 갱신한다.
 
 ## 절대 하지 말 것
-- `*.generated.h`, `Intermediate/`, `Binaries/`, `Saved/`, `.uasset` 등 생성/바이너리 산출물 편집(`CLAUDE.md` 5절).
+- `*.generated.h`, `Intermediate/`, `Binaries/`, `Saved/`, `.uasset` 등 생성/바이너리 산출물 편집(`CLAUDE.md` 7절).
 - 계획에 없는 범위 확장(scope creep). 계획 외 변경이 꼭 필요하면 그 이유를 결과에 명시한다.
 
 ## 산출물
