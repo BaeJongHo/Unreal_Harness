@@ -1,0 +1,15 @@
+# Claude Code 개인 설정 (사용자별, 공유 안 함)
+.claude/settings.local.json
+
+# OS / 에디터
+Thumbs.db
+.DS_Store
+*.swp
+
+# 이 저장소는 하네스 템플릿이다. 아래는 실제 UE 프로젝트에 적용했을 때를 대비한 참고용.
+# (이 저장소 자체에는 해당 산출물이 없다.)
+Binaries/
+Intermediate/
+DerivedDataCache/
+Saved/
+*.generated.h

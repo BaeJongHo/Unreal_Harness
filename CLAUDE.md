@@ -1,0 +1,144 @@
+# CLAUDE.md — 언리얼 엔진 5.7 프로젝트 규약
+
+이 문서는 Claude Code가 본 언리얼 엔진(UE) 5.7 C++ 게임 프로젝트에서 작업할 때 **항상 준수해야 하는 규약**이다.
+모든 서브에이전트(`.claude/agents/`)와 스킬(`.claude/skills/`)은 이 규약을 기준으로 동작한다.
+
+> 이 저장소는 **하네스 템플릿**이다. 실제 UE 프로젝트에 적용하는 방법은 [docs/INSTALL.md](docs/INSTALL.md)를 참고한다.
+> 적용 시 아래의 `<...>` 자리표시자를 프로젝트 실제 값으로 교체한다.
+
+---
+
+## 1. 프로젝트 기본 정보 (적용 시 채워 넣기)
+
+| 항목 | 값 |
+| --- | --- |
+| 프로젝트명 | `<ProjectName>` |
+| 주 게임 모듈 | `Source/<ProjectName>/` |
+| 에디터 전용 모듈 | `Source/<ProjectName>Editor/` (있는 경우) |
+| 엔진 버전 | UE 5.7 |
+| 엔진 설치 경로 | `<UE_5.7_ENGINE_PATH>` (예: `C:\Program Files\Epic Games\UE_5.7`) |
+| `.uproject` 경로 | `<PROJECT_ROOT>\<ProjectName>.uproject` |
+
+---
+
+## 2. 빌드 / 실행 명령 (Windows · PowerShell 기준)
+
+작업 검증은 반드시 **실제 빌드**로 확인한다. 컴파일되지 않은 코드는 "완료"가 아니다.
+
+```powershell
+# (1) 프로젝트 파일 생성 — .Build.cs / 모듈 구조를 바꾼 뒤 실행
+& "<UE_5.7_ENGINE_PATH>\Engine\Build\BatchFiles\Build.bat" `
+  -projectfiles -project="<PROJECT_ROOT>\<ProjectName>.uproject" -game -engine
+
+# (2) 에디터 타깃 빌드 (가장 자주 사용) — Development Editor
+& "<UE_5.7_ENGINE_PATH>\Engine\Build\BatchFiles\Build.bat" `
+  <ProjectName>Editor Win64 Development `
+  -project="<PROJECT_ROOT>\<ProjectName>.uproject" -waitmutex
+
+# (3) 에디터 실행
+& "<UE_5.7_ENGINE_PATH>\Engine\Binaries\Win64\UnrealEditor.exe" `
+  "<PROJECT_ROOT>\<ProjectName>.uproject"
+
+# (4) 쿠킹/패키징 (배포 빌드)
+& "<UE_5.7_ENGINE_PATH>\Engine\Build\BatchFiles\RunUAT.bat" `
+  BuildCookRun -project="<PROJECT_ROOT>\<ProjectName>.uproject" `
+  -noP4 -platform=Win64 -clientconfig=Shipping -cook -build -stage -pak -archive `
+  -archivedirectory="<PROJECT_ROOT>\Build"
+```
+
+- 빌드 로그가 길면 마지막 30~50줄만 확인하고, `error`/`warning` 키워드로 필터링한다.
+- `-waitmutex`는 에디터가 켜진 채 빌드할 때 충돌을 막는다. **에디터 실행 중 핫리로드용 빌드에는 반드시 포함**한다.
+- 헤더만 바꾼 경우라도 `.generated.h` 의존성 때문에 전체 재컴파일이 필요할 수 있다.
+
+---
+
+## 3. C++ 코딩 규약 (Epic 표준 기반)
+
+### 3.1 네이밍 접두사
+| 접두사 | 대상 | 예 |
+| --- | --- | --- |
+| `U` | `UObject` 파생 클래스 | `UHealthComponent` |
+| `A` | `AActor` 파생 클래스 | `APlayerCharacter` |
+| `F` | 일반 구조체 / 비-UObject 클래스 | `FDamageEvent` |
+| `E` | 열거형 (`enum class` 권장) | `EWeaponState` |
+| `I` | 인터페이스 | `IInteractable` |
+| `T` | 템플릿 | `TArray`, `TSubclassOf` |
+| `b` | bool 변수 | `bIsDead`, `bCanJump` |
+
+- 함수·변수는 `PascalCase`. 지역 변수도 `PascalCase`를 따른다(언더스코어/카멜케이스 금지).
+- 헤더 파일명 = 주 클래스명(접두사 제외). 예: `UHealthComponent` → `HealthComponent.h`.
+
+### 3.2 UPROPERTY / UFUNCTION
+- 에디터 노출/직렬화/리플리케이션이 필요하면 `UPROPERTY`를 단다.
+- **GC 추적이 필요한 모든 `UObject*` 멤버는 반드시 `UPROPERTY()`로 선언**한다(3.3 참고).
+- 블루프린트 노출은 최소 권한 원칙: 꼭 필요할 때만 `BlueprintReadOnly`/`BlueprintCallable`을 사용하고, 쓰기 노출(`BlueprintReadWrite`)은 신중히.
+- 흔한 지정자:
+  - `UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="...")`
+  - `UPROPERTY(VisibleAnywhere, BlueprintReadOnly)` — 컴포넌트 핸들 등
+  - `UFUNCTION(BlueprintCallable, Category="...")`
+  - 리플리케이션: `UPROPERTY(ReplicatedUsing=OnRep_Foo)` + `GetLifetimeReplicatedProps` 갱신 필수.
+- 모든 `UPROPERTY`/`UFUNCTION`에는 의미 있는 `Category`를 부여한다.
+
+### 3.3 메모리 · 가비지 컬렉션 (UE에서 가장 중요)
+- `UObject` 포인터 멤버는 **`TObjectPtr<T>` + `UPROPERTY()`** 로 선언한다(UE5 표준). 원시 포인터로 두면 GC가 추적하지 못해 댕글링이 발생한다.
+  ```cpp
+  UPROPERTY(VisibleAnywhere)
+  TObjectPtr<UHealthComponent> HealthComponent;
+  ```
+- 소유하지 않는 약한 참조는 `TWeakObjectPtr<T>`를 사용한다.
+- 객체 생성:
+  - 일반 `UObject` → `NewObject<T>(Outer)`
+  - 액터 → `GetWorld()->SpawnActor<T>(...)`
+  - 컴포넌트 → 생성자에서 `CreateDefaultSubobject<T>(TEXT("Name"))`
+- `delete`로 `UObject`를 해제하지 않는다. 명시적 파괴는 `Actor->Destroy()` / `MarkAsGarbage()`.
+- `TArray<TObjectPtr<T>>`, `TMap` 등 컨테이너도 `UPROPERTY()`가 있어야 원소가 GC 추적된다.
+
+### 3.4 include 규칙 (IWYU)
+- UE 5.7은 IWYU(Include What You Use)를 강제한다. `Engine.h` 같은 모놀리식 헤더 금지.
+- 헤더에서는 **전방 선언**을 우선하고, 실제 사용하는 `.cpp`에서 구체 헤더를 include 한다.
+- 각 `.cpp`의 첫 include는 자기 짝 헤더(`#include "HealthComponent.h"`)여야 한다.
+- `*.generated.h`는 항상 **해당 클래스 헤더의 마지막 include**여야 한다.
+
+### 3.5 로깅 / 어서션
+- `printf`/`std::cout` 금지. 로깅은 `UE_LOG`:
+  ```cpp
+  UE_LOG(LogTemp, Warning, TEXT("Health = %f"), CurrentHealth);
+  ```
+  - 모듈 전용 로그 카테고리(`DECLARE_LOG_CATEGORY_EXTERN`)를 정의해 `LogTemp` 남용을 피한다.
+- 문자열 리터럴은 항상 `TEXT("...")`로 감싼다.
+- 불변식 검사: 치명적 위반은 `check()`, 복구 가능/디버그 경고는 `ensure()` / `ensureMsgf()`.
+
+---
+
+## 4. 모듈 구조 규약
+- 런타임 로직은 게임 런타임 모듈에, 에디터 전용 코드(커스텀 디테일 패널, 에셋 액션 등)는 `*Editor` 모듈에 둔다.
+- 새 모듈 의존성은 해당 모듈의 `*.Build.cs`의 `PublicDependencyModuleNames` / `PrivateDependencyModuleNames`에 추가한다.
+- `.Build.cs`를 수정하면 **2절 (1) 프로젝트 파일 생성을 다시 실행**한다.
+- 모듈 간 순환 의존을 만들지 않는다.
+
+---
+
+## 5. 절대 건드리지 말 것 (금지 경로)
+다음은 생성/캐시 산출물이다. 직접 편집·생성·삭제하지 않는다(`guard-generated` 훅이 차단한다).
+- `*.generated.h`, `*.gen.cpp`
+- `Intermediate/`, `Binaries/`, `DerivedDataCache/`, `Saved/`
+- `.uasset` / `.umap` (바이너리 — Claude가 직접 편집 불가, 에디터에서 작업)
+
+---
+
+## 6. 작업 방식 (파이프라인)
+기능 단위 작업은 `/ue-feature` 커맨드가 구동하는 **4단계 에이전트 파이프라인**을 따른다.
+상세는 [docs/PIPELINE.md](docs/PIPELINE.md) 참고.
+
+```
+요청 ──▶ ue-architect(설계) ──▶ ue-implementer(구현) ──▶ ue-builder(빌드) ──▶ ue-reviewer(리뷰) ──▶ 완료
+```
+
+- 작은 수정은 파이프라인 없이 직접 처리해도 된다.
+- 커밋/푸시는 사용자가 명시적으로 요청할 때만 수행한다. 커밋 메시지 끝에는 Co-Authored-By 트레일러를 붙인다.
+
+---
+
+## 7. 커밋 규약
+- 한 커밋은 하나의 논리적 변경. 생성 산출물(5절)은 절대 커밋하지 않는다.
+- 메시지: 한 줄 요약(한국어 가능) + 필요 시 본문. 예: `feat(combat): 근접 공격 히트 판정 추가`.
