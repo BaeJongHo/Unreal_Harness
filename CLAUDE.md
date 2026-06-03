@@ -127,12 +127,15 @@
 ---
 
 ## 6. 작업 방식 (파이프라인)
-기능 단위 작업은 `/ue-feature` 커맨드가 구동하는 **4단계 에이전트 파이프라인**을 따른다.
+기능 단위 작업은 `/ue-feature` 커맨드가 구동하는 **5단계 에이전트 파이프라인**을 따른다.
 상세는 [docs/PIPELINE.md](docs/PIPELINE.md) 참고.
 
 ```
-요청 ──▶ ue-architect(설계) ──▶ ue-implementer(구현) ──▶ ue-builder(빌드) ──▶ ue-reviewer(리뷰) ──▶ 완료
+요청 ─▶ ue-architect(설계) ─▶ ue-implementer(구현) ─▶ ue-builder(빌드) ─▶ ue-reviewer(리뷰) ─▶ ue-doc-writer(문서화) ─▶ 완료
 ```
+
+- 각 에이전트 실행 직전 `gate-pipeline` 훅이 사용자 승인을 요청한다. 승인해야 다음 단계로 넘어간다.
+- 5단계 문서는 `C:\Users\user\Desktop\UE5 Game Feature`에 md로 저장된다.
 
 - 작은 수정은 파이프라인 없이 직접 처리해도 된다.
 - 커밋/푸시는 사용자가 명시적으로 요청할 때만 수행한다. 커밋 메시지 끝에는 Co-Authored-By 트레일러를 붙인다.

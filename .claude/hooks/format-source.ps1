@@ -1,4 +1,4 @@
-# format-source.ps1
+﻿# format-source.ps1
 # PostToolUse 훅: Edit/Write/MultiEdit로 수정된 C++ 소스에 clang-format을 적용한다.
 # clang-format을 찾지 못하면 조용히 통과한다(비차단). 절대 빌드를 막지 않는다.
 #

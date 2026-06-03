@@ -1,4 +1,4 @@
-# guard-generated.ps1
+﻿# guard-generated.ps1
 # PreToolUse 훅: Edit/Write/MultiEdit가 생성/캐시/바이너리 산출물을 건드리려 하면 차단한다.
 # (CLAUDE.md 5절 "절대 건드리지 말 것" 강제)
 #

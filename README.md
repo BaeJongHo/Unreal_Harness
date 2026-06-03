@@ -5,29 +5,29 @@
 이 저장소는 곧바로 빌드되는 게임이 아니라, UE 프로젝트에 얹어 쓰는 **Claude Code 하네스(에이전트·스킬·훅·규약) 템플릿**이다.
 핵심은 기능 개발을 **역할이 분리된 4개 서브에이전트의 파이프라인**으로 처리하는 것이다.
 
-## 핵심: 4단계 에이전트 파이프라인
+## 핵심: 5단계 에이전트 파이프라인
 
 ```
 /ue-feature "<기능>"
    │
    ▼
- 설계 ──▶ 구현 ──▶ 빌드 ──▶ 리뷰
-ue-architect → ue-implementer → ue-builder → ue-reviewer
- (읽기전용)      (편집)          (빌드/수정)     (읽기전용)
+ 설계 ──▶ 구현 ──▶ 빌드 ──▶ 리뷰 ──▶ 문서화
+ue-architect → ue-implementer → ue-builder → ue-reviewer → ue-doc-writer
+ (읽기전용)      (편집)          (빌드/수정)     (읽기전용)      (md 작성)
 ```
 
-각 단계는 권한이 좁혀진 전용 에이전트가 맡고, 산출물을 다음 단계로 넘긴다. 자세한 설계는 [docs/PIPELINE.md](docs/PIPELINE.md).
+각 단계는 권한이 좁혀진 전용 에이전트가 맡고, 산출물을 다음 단계로 넘긴다. **각 에이전트로 넘어가기 직전에 `gate-pipeline` 훅이 사용자 승인을 요청**하며, 승인해야만 다음 단계로 진행한다. 자세한 설계는 [docs/PIPELINE.md](docs/PIPELINE.md).
 
 ## 구성
 
 | 경로 | 내용 |
 | --- | --- |
 | [`CLAUDE.md`](CLAUDE.md) | UE 5.7 프로젝트 규약 — 빌드 명령, C++ 네이밍, **GC/UPROPERTY 규칙**, 모듈 구조, 금지 경로 |
-| [`.claude/agents/`](.claude/agents) | 파이프라인 서브에이전트 4종 (architect / implementer / builder / reviewer) |
-| [`.claude/commands/ue-feature.md`](.claude/commands/ue-feature.md) | 파이프라인 진입 슬래시 커맨드 |
+| [`.claude/agents/`](.claude/agents) | 파이프라인 서브에이전트 5종 (architect / implementer / builder / reviewer / doc-writer) |
+| [`.claude/commands/ue-feature.md`](.claude/commands/ue-feature.md) | 파이프라인 진입 슬래시 커맨드 (단계마다 승인 게이트) |
 | [`.claude/skills/ue-new-class/`](.claude/skills/ue-new-class) | 규약에 맞는 새 C++ 클래스(Actor/Component/Subsystem 등) 스캐폴딩 |
 | [`.claude/skills/ue-crash-triage/`](.claude/skills/ue-crash-triage) | 크래시 로그/콜스택 분석 → 근본 원인 추정 |
-| [`.claude/hooks/`](.claude/hooks) | `guard-generated`(생성 산출물 편집 차단), `format-source`(clang-format 자동 적용) |
+| [`.claude/hooks/`](.claude/hooks) | `gate-pipeline`(파이프라인 단계마다 승인 요청), `guard-generated`(생성 산출물 편집 차단), `format-source`(clang-format 자동 적용) |
 | [`.claude/settings.json`](.claude/settings.json) | 권한 + 훅 등록 |
 | [`docs/`](docs) | [PIPELINE.md](docs/PIPELINE.md)(파이프라인 설계), [INSTALL.md](docs/INSTALL.md)(적용 가이드) |
 

@@ -32,6 +32,15 @@
             "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \".claude\\hooks\\guard-generated.ps1\""
           }
         ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \".claude\\hooks\\gate-pipeline.ps1\""
+          }
+        ]
       }
     ],
     "PostToolUse": [

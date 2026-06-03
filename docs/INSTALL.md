@@ -35,6 +35,7 @@ docs/
    ```
 
 ## 4. 훅 동작 (Windows · PowerShell)
+- **gate-pipeline** (PreToolUse · `Task`): `/ue-feature` 파이프라인의 각 서브에이전트가 시작되기 직전에 사용자 승인을 요청한다. 승인해야 다음 단계로 넘어간다. 파이프라인 5개 에이전트에만 적용되고 그 외 서브에이전트는 통과한다.
 - **guard-generated** (PreToolUse): `*.generated.h`, `Intermediate/`, `Binaries/`, `Saved/`, `.uasset` 편집 시도를 차단.
 - **format-source** (PostToolUse): 수정된 `.cpp/.h`에 `clang-format -i` 적용. `clang-format`이 없으면 조용히 통과.
   - clang-format 경로를 직접 지정하려면 환경변수 `CLANG_FORMAT_PATH`에 실행 파일 경로를 설정한다.
@@ -42,5 +43,8 @@ docs/
 - 훅 명령은 프로젝트 루트 기준 상대경로(`.claude\hooks\...`)다. 만약 훅이 동작하지 않으면, 사용 중인 OS/셸에 맞게 `settings.json`의 `command`를 절대경로 또는 `$CLAUDE_PROJECT_DIR\.claude\hooks\...` 형태로 조정한다.
 - macOS/Linux를 쓴다면 `.ps1` 훅을 `.sh`로 포팅하고 `settings.json`의 `command`를 `bash` 호출로 바꾼다.
 
-## 5. 권한
+## 5. 문서 산출 경로 (ue-doc-writer)
+파이프라인 5단계 `ue-doc-writer`는 기능 개발 문서를 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장한다. 다른 위치에 저장하려면 [.claude/agents/ue-doc-writer.md](../.claude/agents/ue-doc-writer.md)의 "산출 위치(고정)" 경로와 [.claude/hooks/gate-pipeline.ps1](../.claude/hooks/gate-pipeline.ps1)의 에이전트 목록은 그대로 두고 경로만 바꾸면 된다.
+
+## 6. 권한
 `settings.json`의 `permissions.allow`에는 안전한 git 읽기 명령만 들어 있다. 빌드/패키징 명령은 처음 실행 시 승인 프롬프트가 뜬다. 자주 쓰는 빌드 명령을 무프롬프트로 돌리려면 본인의 `settings.local.json`에 허용 규칙을 추가한다(개인 설정이라 공유되지 않음).
