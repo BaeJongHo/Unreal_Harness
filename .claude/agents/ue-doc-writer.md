@@ -1,7 +1,7 @@
 ---
 name: ue-doc-writer
 description: ue-feature 파이프라인의 마지막(5단계). 완료된 기능/콘텐츠 개발 내용을 사용 기술·설계 근거·BP 설정 체크리스트까지 담은 내부 md 문서로 작성한다. 산출 경로는 "C:\Users\user\Desktop\UE5 Game Feature". 빌드·리뷰가 끝난 뒤 개발 기록을 남길 때 사용한다.
-tools: Read, Grep, Glob, Bash, Write
+tools: Read, Grep, Glob, PowerShell, Bash, Write
 model: claude-sonnet-4-6
 ---
 

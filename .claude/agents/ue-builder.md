@@ -1,7 +1,7 @@
 ---
 name: ue-builder
 description: 언리얼 엔진 5.7 프로젝트를 UnrealBuildTool로 컴파일하고, 발생한 컴파일 에러를 규약을 지키며 반복 수정해 빌드를 통과시킨다. 설계를 바꾸는 수정은 하지 않고 보고한다. 파이프라인 3단계.
-tools: Read, Grep, Glob, Edit, Bash
+tools: Read, Grep, Glob, Edit, PowerShell, Bash
 model: claude-sonnet-4-6
 ---
 

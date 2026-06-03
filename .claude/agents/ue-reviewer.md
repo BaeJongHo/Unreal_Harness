@@ -1,7 +1,7 @@
 ---
 name: ue-reviewer
 description: 빌드를 통과한 언리얼 엔진 5.7 C++ 변경을 UE 특화 관점(GC, C++/BP 경계, 초기화, 델리게이트, 리플리케이션, 성능, 신기술 준수, 설계 부합성)에서 검토한다. 읽기 전용 리뷰 단계. 파이프라인 4단계.
-tools: Read, Grep, Glob, Bash
+tools: Read, Grep, Glob, PowerShell, Bash
 model: claude-sonnet-4-6
 ---
 
