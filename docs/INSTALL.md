@@ -43,8 +43,8 @@ docs/
 - 훅 명령은 프로젝트 루트 기준 상대경로(`.claude\hooks\...`)다. 만약 훅이 동작하지 않으면, 사용 중인 OS/셸에 맞게 `settings.json`의 `command`를 절대경로 또는 `$CLAUDE_PROJECT_DIR\.claude\hooks\...` 형태로 조정한다.
 - macOS/Linux를 쓴다면 `.ps1` 훅을 `.sh`로 포팅하고 `settings.json`의 `command`를 `bash` 호출로 바꾼다.
 
-## 5. 블로그 글 산출 경로 (ue-doc-writer)
-파이프라인 5단계 `ue-doc-writer`는 이번에 개발한 기능을 "소울라이크 게임 1인 개발 여정" Tistory devlog 글(md)로 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장한다. 다른 위치에 저장하려면 [.claude/agents/ue-doc-writer.md](../.claude/agents/ue-doc-writer.md)의 "산출 위치(고정)" 경로와 [.claude/hooks/gate-pipeline.ps1](../.claude/hooks/gate-pipeline.ps1)의 에이전트 목록은 그대로 두고 경로만 바꾸면 된다.
+## 5. 문서 산출 경로 (ue-doc-writer)
+파이프라인 5단계 `ue-doc-writer`는 기능 개발 문서를 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장한다. 다른 위치에 저장하려면 [.claude/agents/ue-doc-writer.md](../.claude/agents/ue-doc-writer.md)의 "산출 위치(고정)" 경로와 [.claude/hooks/gate-pipeline.ps1](../.claude/hooks/gate-pipeline.ps1)의 에이전트 목록은 그대로 두고 경로만 바꾸면 된다.
 
 ## 6. 권한
 `settings.json`의 `permissions.allow`에는 안전한 git 읽기 명령만 들어 있다. 빌드/패키징 명령은 처음 실행 시 승인 프롬프트가 뜬다. 자주 쓰는 빌드 명령을 무프롬프트로 돌리려면 본인의 `settings.local.json`에 허용 규칙을 추가한다(개인 설정이라 공유되지 않음).
