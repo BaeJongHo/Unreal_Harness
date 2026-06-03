@@ -1,7 +1,7 @@
 # 에이전트 파이프라인 설계
 
 이 하네스의 핵심은 UE 5.7 기능 개발을 **역할이 분리된 5개 서브에이전트의 파이프라인**으로 처리하는 것이다.
-단일 에이전트가 설계·구현·빌드·리뷰·문서화를 모두 하면 컨텍스트가 뒤섞이고 GC 같은 UE 특화 함정을 놓치기 쉽다.
+단일 에이전트가 설계·구현·빌드·리뷰·블로그 글쓰기를 모두 하면 컨텍스트가 뒤섞이고 GC 같은 UE 특화 함정을 놓치기 쉽다.
 각 단계를 분리하면 (1) 단계별로 권한(도구)을 좁혀 안전하고, (2) 리뷰가 독립적이라 더 객관적이며, (3) 실패 지점이 명확해진다.
 
 ## 전체 흐름
@@ -15,7 +15,7 @@
                                    │ 각 단계 진입 전 사용자 승인(게이트), 산출물을 단계 간 전달
    ┌───────────────┐   ┌───────────────┐   ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
    │ ue-architect  │─▶ │ ue-implementer│─▶ │  ue-builder   │─▶ │  ue-reviewer  │─▶ │ ue-doc-writer │
-   │   설계 (RO)   │   │   구현 (RW)   │   │   빌드 (RW)   │   │   리뷰 (RO)   │   │  문서화 (md)  │
+   │   설계 (RO)   │   │   구현 (RW)   │   │   빌드 (RW)   │   │   리뷰 (RO)   │   │ 블로그 글(RW) │
    └───────────────┘   └───────▲───────┘   └───────────────┘   └───────┬───────┘   └───────────────┘
        ▲ 승인          ▲ 승인  │           ▲ 승인               ▲ 승인  │            ▲ 승인
        │               │       └──── 🔴 Blocking 수정 (최대 1회) ◀──────┘
@@ -36,9 +36,9 @@
 | 2 구현 | [`ue-implementer`](../.claude/agents/ue-implementer.md) | + Edit, Write, Bash | 구현 계획 → 코드 변경 |
 | 3 빌드 | [`ue-builder`](../.claude/agents/ue-builder.md) | Read, Grep, Glob, Edit, Bash | 변경 → 빌드 성공 |
 | 4 리뷰 | [`ue-reviewer`](../.claude/agents/ue-reviewer.md) | Read, Grep, Glob, Bash | 변경 → 리뷰 리포트 |
-| 5 문서화 | [`ue-doc-writer`](../.claude/agents/ue-doc-writer.md) | Read, Grep, Glob, Bash, Write | 전체 산출물 → md 개발 문서 |
+| 5 블로그 글 | [`ue-doc-writer`](../.claude/agents/ue-doc-writer.md) | Read, Grep, Glob, Bash, Write | 전체 산출물 → "소울라이크 1인 개발 여정" devlog 글(md) |
 
-> 5단계 문서는 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장된다(경로는 에이전트 정의에서 변경 가능).
+> 5단계 블로그 글은 `C:\Users\user\Desktop\UE5 Game Feature` 폴더에 `{날짜}_{기능명}.md`로 저장된다(경로는 에이전트 정의에서 변경 가능). Tistory에 붙여넣을 수 있는 마크다운이며, 제안 태그와 이미지 자리표시자를 포함한다.
 
 ## 설계 원칙
 

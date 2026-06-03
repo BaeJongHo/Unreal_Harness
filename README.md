@@ -11,9 +11,9 @@
 /ue-feature "<기능>"
    │
    ▼
- 설계 ──▶ 구현 ──▶ 빌드 ──▶ 리뷰 ──▶ 문서화
+ 설계 ──▶ 구현 ──▶ 빌드 ──▶ 리뷰 ──▶ 블로그 글
 ue-architect → ue-implementer → ue-builder → ue-reviewer → ue-doc-writer
- (읽기전용)      (편집)          (빌드/수정)     (읽기전용)      (md 작성)
+ (읽기전용)      (편집)          (빌드/수정)     (읽기전용)      (devlog 작성)
 ```
 
 각 단계는 권한이 좁혀진 전용 에이전트가 맡고, 산출물을 다음 단계로 넘긴다. **각 에이전트로 넘어가기 직전에 `gate-pipeline` 훅이 사용자 승인을 요청**하며, 승인해야만 다음 단계로 진행한다. 자세한 설계는 [docs/PIPELINE.md](docs/PIPELINE.md).
